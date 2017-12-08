@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emotion">
+        <item>감정 선택</item>
+        <item>기쁨</item>
+        <item>설렘</item>
+        <item>무념무상</item>
+        <item>우울</item>
+        <item>분노</item>
+    </string-array>
+</resources>
