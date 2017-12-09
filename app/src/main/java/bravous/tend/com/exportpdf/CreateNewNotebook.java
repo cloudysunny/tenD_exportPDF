@@ -11,6 +11,7 @@ public class CreateNewNotebook extends AppCompatActivity {
     final static int CHRISTMAS = 1;
     EditText noteNameView;
     Button createNoteBtn;
+    NotebookType notebookType = NotebookType.FLOWER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class CreateNewNotebook extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String newName = noteNameView.getText().toString();
-                createNewNote(newName,CHRISTMAS, false, null );
+                createNewNote(newName, notebookType.ordinal(), false, null );
                 finish();
             }
         });
@@ -45,4 +46,6 @@ public class CreateNewNotebook extends AppCompatActivity {
         helper.createNotebook(notebook);
 
     }
+
+
 }

@@ -13,7 +13,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
 
-    public static final String DATABASE_NAME = "testDB10";
+    public static final String DATABASE_NAME = "testDB11";
 
     public static final String TABLE_NOTEBOOK = "notebook_tb";
     public static final String TABLE_DIARY = "diary_tb";
@@ -49,7 +49,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                         KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         KEY_NOTEBOOK_NAME + " not null, " +
                         KEY_NOTEBOOK_TYPE + " INTEGER not null, " +
-                        //boolean : true=0, false=1
+                        //boolean : false=0, true=1
                         KEY_EXIST_PDF + " INTEGER not null, " +
                         KEY_PDF_PATH + ");";
 

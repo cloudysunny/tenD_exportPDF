@@ -214,6 +214,7 @@ public class writeNewDiary extends AppCompatActivity {
             notebook_Name = cursor.getString(cursor.getColumnIndex(helper.KEY_NOTEBOOK_NAME));
         }
         db.close();
+
      return notebook_Name;
     }
 

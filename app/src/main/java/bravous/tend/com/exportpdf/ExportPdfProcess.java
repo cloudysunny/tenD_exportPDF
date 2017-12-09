@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,23 +40,28 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ExportPdfProcess extends AppCompatActivity {
+public class ExportPdfProcess extends BaseActivity {
 
     public Bitmap bmp;
+    NotebookType notebookType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_pdf_process);
 
-
         Button pdfBtn = (Button)findViewById(R.id.PDFexport);
+
+        int ordinal = getNotebookType("내공책");
+        Log.i("getNotebookType() check", Integer.toString(ordinal));
+        final int coverPath = getNotebookCoverPath(ordinal);
 
         pdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    createPDF("내공책.pdf");
+                    createPDF("내공책.pdf", coverPath);
+                    updatePdfInfo("내공책", "내공책.pdf");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -94,14 +98,14 @@ public class ExportPdfProcess extends AppCompatActivity {
 
 
     //pdf파일 생성 메소드
-    public void createPDF(String filename) throws Exception{
+    public void createPDF(String filename, int coverPath) throws Exception{
 
-        //저장경로 받아오기
+        //저장공간 상태 확인
         String state = Environment.getExternalStorageState();
         if(!Environment.MEDIA_MOUNTED.equals(state)){
             Toast.makeText(getApplicationContext(), "저장공간이 부족합니다.", Toast.LENGTH_SHORT).show();
         }
-        //DIRECTORY_DOWNLOADS : 핸드폰 외부저장소의 tenD폴더 정보를 불러옴(폴더가 없을 경우 새로 생성)
+        //핸드폰 외부저장소의 tenD폴더 정보를 불러옴(폴더가 없을 경우 새로 생성)
         File pdfDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "/tenD");
         if(!pdfDir.exists()){
             pdfDir.mkdirs();
@@ -136,18 +140,20 @@ public class ExportPdfProcess extends AppCompatActivity {
             Font font = new Font(baseFont, 16);
 
             //공책 표지
-            Image coverImg = getImage(R.drawable.cover3, "JPG");
+            Image coverImg = getImage(coverPath, "JPG");
             coverImg.scaleAbsolute(PageSize.B5);
             coverImg.setAbsolutePosition(0, 0);
             document.add(coverImg);
             document.newPage();
 
            //일기 데이터 가져오기
-            ArrayList<Diary> diaryList = getDatabase("내공책");
+            ArrayList<Diary> diaryList = getAllDiary("내공책");
             Iterator <Diary>iterator = diaryList.iterator();
+
 
             while (iterator.hasNext()) {
                 Diary diary = iterator.next();
+                Log.i("getAllDiary() check", diary.getDate());
                 //날짜, 감정으로 이루어진 테이블(두 요소를 나란히 놓기 위해서)
                 PdfPTable table = new PdfPTable(2);
                 table.setWidthPercentage(100);
@@ -237,30 +243,7 @@ public class ExportPdfProcess extends AppCompatActivity {
 
 
 
-    private ArrayList<Diary> getDatabase(String note_name) {
 
-        ArrayList<Diary> list = new ArrayList<>();
-        //일기 데이터 불러오기
-        MyDBHelper myDBHelper = new MyDBHelper(this);
-        SQLiteDatabase db = myDBHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + myDBHelper.TABLE_DIARY
-                + " WHERE " + myDBHelper.KEY_NOTEBOOK_NAME + " = '"+note_name +"'", null);
-
-        while (cursor.moveToNext()){
-
-            Diary diary = new Diary();
-            diary.setDate(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_DATE)));
-            diary.setEmotion(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_EMOTION)));
-            diary.setImgPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_IMG_PATH)));
-            diary.setTextPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_TEXT_PATH)));
-
-            list.add(diary);
-        }
-
-        db.close();
-
-    return list;
-    }
 
 
     //작업완료 후 비트맵이 계속 메모리를 차지하고 있지 않도록 처리
@@ -272,6 +255,38 @@ public class ExportPdfProcess extends AppCompatActivity {
             bmp = null;
         }
 
+    }
+
+    private void updatePdfInfo(String note_name, String pdfname){
+
+        String pdfPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/tenD/"+pdfname;
+        MyDBHelper myDBHelper = new MyDBHelper(this);
+        SQLiteDatabase db = myDBHelper.getWritableDatabase();
+        Cursor before = db.rawQuery("SELECT " + myDBHelper.KEY_EXIST_PDF + "," +myDBHelper.KEY_PDF_PATH
+                +" FROM " + myDBHelper.TABLE_NOTEBOOK
+                + " WHERE " + myDBHelper.KEY_NOTEBOOK_NAME + " = '" + note_name +"'", null);
+
+        if(before.getCount() != 0) {
+            before.moveToFirst();
+            Log.i("DB update check", before.getInt(0) + ", " + before.getString(1));
+        }
+
+       db.execSQL("UPDATE " + myDBHelper.TABLE_NOTEBOOK
+               + " SET " + myDBHelper.KEY_EXIST_PDF + " = 1, "
+               + myDBHelper.KEY_PDF_PATH + " = '"+ pdfPath
+       + "' WHERE "+ myDBHelper.KEY_NOTEBOOK_NAME + " = '" + note_name +"'");
+
+
+        Cursor after = db.rawQuery("SELECT " + myDBHelper.KEY_EXIST_PDF + "," +myDBHelper.KEY_PDF_PATH
+                +" FROM " + myDBHelper.TABLE_NOTEBOOK
+                + " WHERE " + myDBHelper.KEY_NOTEBOOK_NAME + " = '" + note_name +"'", null);
+
+        if(after.getCount() != 0) {
+            after.moveToFirst();
+            Log.i("DB update check", after.getInt(0) + ", " + after.getString(1));
+        }
+
+        db.close();
     }
 }
 

@@ -62,4 +62,7 @@ public class Diary {
         return imgPath;
     }
 
+
+
+
 }
