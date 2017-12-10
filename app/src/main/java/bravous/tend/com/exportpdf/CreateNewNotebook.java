@@ -8,10 +8,9 @@ import android.widget.EditText;
 
 public class CreateNewNotebook extends AppCompatActivity {
 
-    final static int CHRISTMAS = 1;
     EditText noteNameView;
     Button createNoteBtn;
-    NotebookType notebookType = NotebookType.FLOWER;
+    NotebookType notebookType = NotebookType.FRUIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

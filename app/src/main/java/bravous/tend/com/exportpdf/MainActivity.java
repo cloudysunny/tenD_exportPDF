@@ -29,6 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if(view.getId() == R.id.newDiary)
             startActivity(new Intent(getApplicationContext(), writeNewDiary.class));
         else if(view.getId() == R.id.toPDF)
-            startActivity(new Intent(getApplicationContext(), ExportPdfProcess.class));
+            startActivity(new Intent(getApplicationContext(), ExportSelectActivity.class));
     }
 }

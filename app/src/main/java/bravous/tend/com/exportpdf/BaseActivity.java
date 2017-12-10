@@ -30,7 +30,7 @@ public class BaseActivity extends AppCompatActivity {
             return notebook;
         }
 
-        public int getNotebookType(String notebook_name){
+        public int getNotebookTypeFromName(String notebook_name){
 
             int notebook_type = 0;
 
@@ -54,6 +54,7 @@ public class BaseActivity extends AppCompatActivity {
 
         public int getNotebookCoverPath(int ordinal){
             int coverPath = 0;
+
             if(ordinal==0){
                 coverPath=NotebookType.LEAF.getCoverPath();
             }else if(ordinal == 1){
@@ -99,19 +100,21 @@ public class BaseActivity extends AppCompatActivity {
             //일기 데이터 불러오기
             MyDBHelper myDBHelper = new MyDBHelper(this);
             SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM " + myDBHelper.TABLE_NOTEBOOK, null);
+            Cursor cursor = db.rawQuery("SELECT * FROM " + myDBHelper.TABLE_NOTEBOOK
+                    + " ORDER BY " + myDBHelper.KEY_ID + " desc;", null);
 
             while (cursor.moveToNext()){
 
                 Notebook notebook = new Notebook();
                 notebook.setNotebook_name(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_NAME)));
                 notebook.setNotebook_type(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_TYPE)));
-                notebook.setPdfPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_TEXT_PATH)));
+                notebook.setPdfPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_PDF_PATH)));
+                notebook.setExist_pdf(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))>0);
 
-                if(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))==0)
-                    notebook.setExist_pdf(false);
-                else
-                    notebook.setExist_pdf(true);
+//                if(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))==0)
+//                    notebook.setExist_pdf(false);
+//                else
+//                    notebook.setExist_pdf(true);
 
                 list.add(notebook);
             }

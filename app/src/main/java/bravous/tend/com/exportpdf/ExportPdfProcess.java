@@ -52,7 +52,7 @@ public class ExportPdfProcess extends BaseActivity {
 
         Button pdfBtn = (Button)findViewById(R.id.PDFexport);
 
-        int ordinal = getNotebookType("내공책");
+        int ordinal = getNotebookTypeFromName("내공책");
         Log.i("getNotebookType() check", Integer.toString(ordinal));
         final int coverPath = getNotebookCoverPath(ordinal);
 

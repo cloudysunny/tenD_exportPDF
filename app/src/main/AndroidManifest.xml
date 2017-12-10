@@ -25,7 +25,6 @@
         <activity android:name=".writeNewDiary" />
         <activity android:name=".ExportPdfProcess" />
         <activity android:name=".CreateNewNotebook" />
-        <activity android:name=".ViewDiaryItem"></activity>
     </application>
 
 </manifest>

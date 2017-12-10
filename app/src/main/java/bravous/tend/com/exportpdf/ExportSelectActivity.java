@@ -3,75 +3,115 @@ package bravous.tend.com.exportpdf;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class ExportSelectActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class ExportSelectActivity extends BaseActivity {
+
+
+    private ArrayList<Notebook> notebookArrayList;
+    private NotebookViewAdapter adapter;
+    private GridLayoutManager layoutManager;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_select);
 
+        notebookArrayList = getAllNotebook();
+        Log.i("NotebookList count", Integer.toString(notebookArrayList.size()));
+        layoutManager = new GridLayoutManager(ExportSelectActivity.this, 2);
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(layoutManager);
 
-        int image[] = {};
+        adapter = new NotebookViewAdapter(this, notebookArrayList);
+        recyclerView.setAdapter(adapter);
 
-        NotebookViewAdapter adapter = new NotebookViewAdapter(getApplicationContext(),image);
 
-        GridView gridView = (GridView)findViewById(R.id.exportSelectView);
-        gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent();
 
-                startActivity(intent);
-            }
-        });
+
     }
 
 
-    class NotebookViewAdapter extends BaseAdapter{
+    public class NotebookViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        Context context;
-        int image[];
+        private Context context;
+        private ArrayList<Notebook> notebookList;
 
-        public NotebookViewAdapter(Context context, int image[]){
+        public NotebookViewAdapter(Context context, ArrayList<Notebook> notebookList){
             this.context = context;
-            this.image = image;
+            this.notebookList = notebookList;
         }
 
 
+
         @Override
-        public int getCount() {
-            return image.length;
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View layoutView = LayoutInflater.from(ExportSelectActivity.this).inflate(R.layout.notebook_item, parent, false);
+            return new NotebookViewHolder(layoutView);
         }
 
         @Override
-        public Object getItem(int position) {
-            return image[position];
-        }
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            Notebook notebook = notebookList.get(position);
+            NotebookViewHolder viewHolder = (NotebookViewHolder)holder;
+            Log.i("getNotebook_type() ", Integer.toString(notebook.getNotebook_type()));
+            Log.i("getNotebookCoverPath()", Integer.toString(getNotebookCoverPath(1)));
+            viewHolder.imageView.setImageResource(getNotebookCoverPath(notebook.getNotebook_type()));
+            viewHolder.titleView.setText(notebook.getNotebook_name());
 
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup viewGroup) {
-            if(view == null){
-                view = LayoutInflater.from(ExportSelectActivity.this)
-                        .inflate(R.layout.notebook_item, viewGroup, false);
-              //  ImageView imageView = (ImageView)view.findViewById(R.id.notbook);
-               // imageView.setImageResource(image[position]);
+            if(notebook.getExist_pdf()==true){
+                viewHolder.isPdfView.setText("내보내기 완료");
+            }else{
+                viewHolder.isPdfView.setText("");
             }
-            return view;
+        }
+
+        @Override
+        public int getItemCount() {
+            return notebookList.size();
         }
     }
+
+
+
+    public class NotebookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        ImageView imageView;
+        TextView titleView;
+        TextView isPdfView;
+        Notebook notebook;
+
+        public NotebookViewHolder(View itemView) {
+            super(itemView);
+
+            imageView =(ImageView)itemView.findViewById(R.id.notebook_cover);
+            titleView = (TextView)itemView.findViewById(R.id.notebook_name);
+            isPdfView = (TextView)itemView.findViewById(R.id.exist_pdf);
+
+            notebook = new Notebook();
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), ExportPdfDetail.class);
+            intent.putExtra("NOTEBOOK_NAME", notebook.getNotebook_name());
+            intent.putExtra("NOTEBOOK_TYPE", notebook.getNotebook_type());
+            startActivity(intent);
+
+        }
+    }
+
 }
