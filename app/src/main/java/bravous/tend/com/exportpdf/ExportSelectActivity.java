@@ -28,16 +28,14 @@ public class ExportSelectActivity extends BaseActivity {
         setContentView(R.layout.activity_export_select);
 
         notebookArrayList = getAllNotebook();
+        //노트가 한 권도 생성되지 않았을 때의 뷰도 따로 마련해야 해
+        //처음 시작할 때 노트를 바로 만들도록 유도할 거지만 그래도 혹시 모르니까
         Log.i("NotebookList count", Integer.toString(notebookArrayList.size()));
         layoutManager = new GridLayoutManager(ExportSelectActivity.this, 2);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
-
         adapter = new NotebookViewAdapter(this, notebookArrayList);
         recyclerView.setAdapter(adapter);
-
-
-
 
 
     }
@@ -106,12 +104,13 @@ public class ExportSelectActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), ExportPdfDetail.class);
+            Intent intent = new Intent(getApplicationContext(), ExportPdfProcess.class);
             intent.putExtra("NOTEBOOK_NAME", notebook.getNotebook_name());
             intent.putExtra("NOTEBOOK_TYPE", notebook.getNotebook_type());
             startActivity(intent);
 
         }
     }
+    
 
 }
