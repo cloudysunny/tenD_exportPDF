@@ -21,6 +21,7 @@ public class ExportSelectActivity extends BaseActivity {
     private NotebookViewAdapter adapter;
     private GridLayoutManager layoutManager;
     private RecyclerView recyclerView;
+    private Notebook selectedNotebook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,6 @@ public class ExportSelectActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new NotebookViewAdapter(this, notebookArrayList);
         recyclerView.setAdapter(adapter);
-
 
     }
 
@@ -61,14 +61,14 @@ public class ExportSelectActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Notebook notebook = notebookList.get(position);
+            selectedNotebook = notebookList.get(position);
             NotebookViewHolder viewHolder = (NotebookViewHolder)holder;
-            Log.i("getNotebook_type() ", Integer.toString(notebook.getNotebook_type()));
+            Log.i("getNotebook_type() ", Integer.toString(selectedNotebook.getNotebook_type()));
             Log.i("getNotebookCoverPath()", Integer.toString(getNotebookCoverPath(1)));
-            viewHolder.imageView.setImageResource(getNotebookCoverPath(notebook.getNotebook_type()));
-            viewHolder.titleView.setText(notebook.getNotebook_name());
+            viewHolder.imageView.setImageResource(getNotebookCoverPath(selectedNotebook.getNotebook_type()));
+            viewHolder.titleView.setText(selectedNotebook.getNotebook_name());
 
-            if(notebook.getExist_pdf()==true){
+            if(selectedNotebook.getExist_pdf()==true){
                 viewHolder.isPdfView.setText("내보내기 완료");
             }else{
                 viewHolder.isPdfView.setText("");
@@ -105,12 +105,12 @@ public class ExportSelectActivity extends BaseActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(getApplicationContext(), ExportPdfProcess.class);
-            intent.putExtra("NOTEBOOK_NAME", notebook.getNotebook_name());
-            intent.putExtra("NOTEBOOK_TYPE", notebook.getNotebook_type());
+            intent.putExtra("NOTEBOOK_NAME", selectedNotebook.getNotebook_name());
+            intent.putExtra("NOTEBOOK_TYPE", selectedNotebook.getNotebook_type());
             startActivity(intent);
 
         }
     }
-    
+
 
 }

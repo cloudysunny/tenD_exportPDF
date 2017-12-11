@@ -1,5 +1,6 @@
 package bravous.tend.com.exportpdf;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.itextpdf.text.BadElementException;
@@ -44,24 +46,37 @@ public class ExportPdfProcess extends BaseActivity {
 
     public Bitmap bmp;
     NotebookType notebookType;
+    String note_name;
+    int note_type;
+    String final_fileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_pdf_process);
 
+        //노트 선택 페이지에서 받아온 intent값
+        Intent intent = getIntent();
+        note_name = intent.getStringExtra("NOTEBOOK_NAME");
+        note_type = intent.getIntExtra("NOTEBOOK_TYPE", 1);
+        //Log.i("intent.getStringExtra()", note_name);
+        final EditText filenameEdit = (EditText)findViewById(R.id.filename_blank);
         Button pdfBtn = (Button)findViewById(R.id.PDFexport);
 
-        int ordinal = getNotebookTypeFromName("내공책");
-        Log.i("getNotebookType() check", Integer.toString(ordinal));
-        final int coverPath = getNotebookCoverPath(ordinal);
+        final int coverPath = getNotebookCoverPath(note_type);
+
+        final String file_name = note_name + ".pdf";
+        filenameEdit.setText(file_name);
 
         pdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    createPDF("내공책.pdf", coverPath);
-                    updatePdfInfo("내공책", "내공책.pdf");
+                    //
+                    final_fileName = filenameEdit.getText().toString();
+
+                    createPDF(final_fileName, coverPath);
+                    updatePdfInfo(note_name, final_fileName);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -147,7 +162,7 @@ public class ExportPdfProcess extends BaseActivity {
             document.newPage();
 
            //일기 데이터 가져오기
-            ArrayList<Diary> diaryList = getAllDiary("내공책");
+            ArrayList<Diary> diaryList = getAllDiary(note_name);
             Iterator <Diary>iterator = diaryList.iterator();
 
 

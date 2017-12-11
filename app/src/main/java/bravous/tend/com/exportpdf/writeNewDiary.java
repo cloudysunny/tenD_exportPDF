@@ -2,14 +2,12 @@ package bravous.tend.com.exportpdf;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,7 +26,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class writeNewDiary extends AppCompatActivity {
+public class writeNewDiary extends BaseActivity {
 
     private static final int GALLERY_CODE = 10;
 
@@ -200,23 +198,7 @@ public class writeNewDiary extends AppCompatActivity {
 
 
 
-    public String getCurrentNotebook(){
 
-        String notebook_Name = null;
-
-      MyDBHelper helper = new MyDBHelper(this);
-      SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select " + helper.KEY_NOTEBOOK_NAME
-                + " from " + helper.TABLE_NOTEBOOK
-                +  " order by _id desc limit 1", null);
-        if(cursor.getCount() != 0) {
-            cursor.moveToFirst();
-            notebook_Name = cursor.getString(cursor.getColumnIndex(helper.KEY_NOTEBOOK_NAME));
-        }
-        db.close();
-
-     return notebook_Name;
-    }
 
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight){

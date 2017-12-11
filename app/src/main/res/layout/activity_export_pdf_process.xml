@@ -4,11 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="bravous.tend.com.exportpdf.ExportPdfProcess">
+
+
+    <EditText
+        android:id="@+id/filename_blank"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:text="*생성된 PDF파일은 스마트폰 기본 저장공간 내의 \n 'tenD'폴더에서 확인할 수 있습니다."/>
 
     <Button
         android:id="@+id/PDFexport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="내보내기"/>
 </LinearLayout>

@@ -14,21 +14,23 @@ import java.util.ArrayList;
 public class BaseActivity extends AppCompatActivity {
 
 
-        public Notebook getCurrentNotebook(){
-            MyDBHelper myDBHelper = new MyDBHelper(this);
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            String sql = "SELECT * FROM " + myDBHelper.TABLE_NOTEBOOK
-                    + " WHERE SELECT MAX(" + myDBHelper.KEY_ID + ") FROM TABLE";
-            Cursor cursor = db.rawQuery(sql, null);
+    public String getCurrentNotebook(){
 
-            Notebook notebook = new Notebook();
-            notebook.setNotebook_name(cursor.getString(1));
-            notebook.setNotebook_type(cursor.getShort(2));
+        String notebook_Name = null;
 
-            db.close();
-
-            return notebook;
+        MyDBHelper helper = new MyDBHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select " + helper.KEY_NOTEBOOK_NAME
+                + " from " + helper.TABLE_NOTEBOOK
+                +  " order by _id desc limit 1", null);
+        if(cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            notebook_Name = cursor.getString(cursor.getColumnIndex(helper.KEY_NOTEBOOK_NAME));
         }
+        db.close();
+
+        return notebook_Name;
+    }
 
         public int getNotebookTypeFromName(String notebook_name){
 

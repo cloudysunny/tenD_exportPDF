@@ -36,7 +36,6 @@ public class Notebook {
         this.pdfPath = pdfPath;
     }
 
-
     public String getNotebook_name(){
         return notebook_name;
     }

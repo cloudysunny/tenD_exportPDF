@@ -13,7 +13,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
 
-    public static final String DATABASE_NAME = "testDB11";
+    public static final String DATABASE_NAME = "testDB13";
 
     public static final String TABLE_NOTEBOOK = "notebook_tb";
     public static final String TABLE_DIARY = "diary_tb";
