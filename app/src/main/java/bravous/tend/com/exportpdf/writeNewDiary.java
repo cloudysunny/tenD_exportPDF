@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,9 +25,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class writeNewDiary extends BaseActivity {
+
+
+    //코멘트 테스트
+    HashSet<String> happy;
+    HashSet<String> excited;
+    HashSet<String> normal;
+    HashSet<String> melancholy;
+    HashSet<String> angry;
 
     private static final int GALLERY_CODE = 10;
 
@@ -49,6 +64,40 @@ public class writeNewDiary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_new_diary);
+
+        //코멘트 테스트
+        happy = new HashSet<>();
+        happy.add("happy1");
+        happy.add("happy2");
+        happy.add("happy3");
+        happy.add("happy4");
+        happy.add("happy5");
+        excited = new HashSet<>();
+        excited.add("excited1");
+        excited.add("excited2");
+        excited.add("excited3");
+        excited.add("excited4");
+        excited.add("excited5");
+        normal = new HashSet<>();
+        normal.add("normal1");
+        normal.add("normal2");
+        normal.add("normal3");
+        normal.add("normal4");
+        normal.add("normal5");
+        melancholy = new HashSet<>();
+        melancholy.add("melancholy1");
+        melancholy.add("melancholy2");
+        melancholy.add("melancholy3");
+        melancholy.add("melancholy4");
+        melancholy.add("melancholy5");
+        angry = new HashSet<>();
+        angry.add("angry1");
+        angry.add("angry2");
+        angry.add("angry3");
+        angry.add("angry4");
+        angry.add("angry5");
+
+
 
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy"+"년 "+"MM"+"월 "+"dd"+"일 ");
@@ -146,6 +195,16 @@ public class writeNewDiary extends BaseActivity {
         Date date = new Date(System.currentTimeMillis());
         String timestamp = simpleDateFormat.format(date);
 
+        //코멘트 보이는 시각 설정
+        Calendar cal = new GregorianCalendar(Locale.KOREA);
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.add(Calendar.DAY_OF_YEAR, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 22);
+        cal.set(Calendar.MINUTE, 00);
+        cal.set(Calendar.SECOND, 00);
+        long time =cal.getTimeInMillis();
+        Log.i("time check", Long.toString(time));
+
                 Diary diary = new Diary();
                 String dateValue = dateview.getText().toString();
                 diary.setNotebook_name(noteName);
@@ -153,7 +212,8 @@ public class writeNewDiary extends BaseActivity {
                 diary.setEmotion(emotion);
                 diary.setImgPath(saveImageFile(imagePathFromGallery, timestamp+".png"));
                 diary.setTextPath(saveTextFile(editText.getText().toString(), timestamp+".txt"));
-
+                diary.setComment(getRandomComment(emotion));
+                diary.setCommentTime(time);
                 return diary;
 
     }
@@ -199,8 +259,6 @@ public class writeNewDiary extends BaseActivity {
 
 
 
-
-
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight){
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -214,6 +272,60 @@ public class writeNewDiary extends BaseActivity {
         }
         return inSampleSize;
     }
+
+
+    public String getRandomComment(String emotion){
+
+        Iterator<String> iterator = null;
+        String comment = null;
+        ArrayList<Diary> checkList = getAllDiary(getCurrentNotebook());
+        Iterator<Diary> iterator1 = checkList.iterator();
+        ArrayList<String> emotionList = new ArrayList<>();
+        while (iterator1.hasNext()){
+         emotionList.add(iterator1.next().getEmotion());
+        }
+        Iterator<String> iterator2 = emotionList.iterator();
+
+        if(emotion.equals("기쁨")){
+                iterator = happy.iterator();
+                comment = iterator.next();
+                while (iterator2.hasNext()){
+                    if(!iterator2.next().equals(iterator.next()))
+                        comment = iterator.next();
+                }
+
+        }else if(emotion.equals("설렘")){
+            iterator = excited.iterator();
+            comment = iterator.next();
+          //  while (iterator2.hasNext()){
+                while (!iterator2.next().equals(iterator.next()))
+                    comment = iterator.next();
+           // }
+        }else if(emotion.equals("무념무상")){
+            iterator = normal.iterator();
+            comment = iterator.next();
+            while (iterator2.hasNext()){
+                if(!iterator2.next().equals(iterator.next()))
+                    comment = iterator.next();
+            }
+        }else if(emotion.equals("우울")){
+            iterator = melancholy.iterator();
+            comment = iterator.next();
+            while (iterator2.hasNext()){
+                if(!iterator2.next().equals(iterator.next()))
+                    comment = iterator.next();
+            }
+        }else if(emotion.equals("분노")){
+            iterator = angry.iterator();
+            comment = iterator.next();
+            while (iterator2.hasNext()){
+                if(!iterator2.next().equals(iterator.next()))
+                    comment = iterator.next();
+            }
+        }
+        return comment;
+    }
+
 
     @Override
     protected void onStop() {

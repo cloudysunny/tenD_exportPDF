@@ -11,15 +11,20 @@ public class Diary {
     String emotion;
     String textPath;
     String imgPath;
+    String comment;
+    long commentTime;
 
     public Diary(){ }
 
-    public Diary(String notebook_name, String date, String emotion, String textPath, String imgPath){
+    public Diary(String notebook_name, String date, String emotion, String textPath, String imgPath, String comment, long commentTime){
         this.notebook_name = notebook_name;
         this.date = date;
         this.emotion = emotion;
         this.textPath = textPath;
         this.imgPath = imgPath;
+        this.comment = comment;
+        this.commentTime = commentTime;
+
     }
 
     public void setNotebook_name(String notebook_name){
@@ -42,6 +47,14 @@ public class Diary {
         this.imgPath = imgPath;
     }
 
+    public void setComment(String comment){
+        this.comment = comment;
+    }
+
+    public void setCommentTime(long commentTime) {
+        this.commentTime = commentTime;
+    }
+
     public String getNotebook_name(){
         return notebook_name;
     }
@@ -62,7 +75,12 @@ public class Diary {
         return imgPath;
     }
 
+    public String getComment() {
+        return comment;
+    }
 
-
+    public long getCommentTime() {
+        return commentTime;
+    }
 
 }

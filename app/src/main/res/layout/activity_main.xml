@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="bravous.tend.com.exportpdf.MainActivity">
 
     <Button
@@ -16,6 +17,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="일기 쓰기"/>
+    <Button
+        android:id="@+id/viewDiary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="일기 보기"/>
     <Button
         android:id="@+id/toPDF"
         android:layout_width="wrap_content"

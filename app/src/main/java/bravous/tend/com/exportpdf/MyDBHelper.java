@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public static final String DATABASE_NAME = "testDB13";
 
@@ -25,6 +25,9 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public final String KEY_EMOTION = "emotion";
     public static final String KEY_IMG_PATH = "img_path";
     public static final String KEY_TEXT_PATH = "text_path";
+    public static final String KEY_COMMENT = "comment";
+    public static final String KEY_COMMENT_TIME = "comment_time";
+
     public static final String KEY_NOTEBOOK_TYPE = "notebook_type";
     public static final String KEY_EXIST_PDF = "exist_pdf";
     public static final String KEY_PDF_PATH = "pdf_path";
@@ -42,7 +45,9 @@ public class MyDBHelper extends SQLiteOpenHelper {
                         KEY_DATE+ " not null, " +
                         KEY_EMOTION + " not null, " +
                         KEY_IMG_PATH + " not null, " +
-                        KEY_TEXT_PATH + " not null);";
+                        KEY_TEXT_PATH + " not null, " +
+                        KEY_COMMENT + " not null, " +
+                        KEY_COMMENT_TIME + " not null);";
 
         String CREATE_TABLE_NOTEBOOK =
                 "CREATE TABLE " + TABLE_NOTEBOOK + " (" +
@@ -81,6 +86,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
         values.put(KEY_EMOTION, diary.getEmotion());
         values.put(KEY_IMG_PATH, diary.getImgPath());
         values.put(KEY_TEXT_PATH, diary.getTextPath());
+        values.put(KEY_COMMENT, diary.getComment());
+        values.put(KEY_COMMENT_TIME, diary.getCommentTime());
 
         db.insert(TABLE_DIARY, null, values);
 

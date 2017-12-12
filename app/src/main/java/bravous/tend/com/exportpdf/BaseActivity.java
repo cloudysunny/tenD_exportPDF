@@ -87,6 +87,9 @@ public class BaseActivity extends AppCompatActivity {
                 diary.setEmotion(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_EMOTION)));
                 diary.setImgPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_IMG_PATH)));
                 diary.setTextPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_TEXT_PATH)));
+                diary.setComment(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_COMMENT)));
+                diary.setCommentTime(cursor.getLong(cursor.getColumnIndex(myDBHelper.KEY_COMMENT_TIME)));
+
 
                 list.add(diary);
             }

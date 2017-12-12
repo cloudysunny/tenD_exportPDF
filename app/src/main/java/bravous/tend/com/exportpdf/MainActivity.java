@@ -15,9 +15,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button newNoteBtn = (Button)findViewById(R.id.newNotebook);
         Button newDiaryBtn = (Button)findViewById(R.id.newDiary);
+        Button viewDiaryBtn = (Button)findViewById(R.id.viewDiary);
         Button pdfBtn = (Button)findViewById(R.id.toPDF);
         newNoteBtn.setOnClickListener(this);
         newDiaryBtn.setOnClickListener(this);
+        viewDiaryBtn.setOnClickListener(this);
         pdfBtn.setOnClickListener(this);
     }
 
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(getApplicationContext(), CreateNewNotebook.class));
         else if(view.getId() == R.id.newDiary)
             startActivity(new Intent(getApplicationContext(), writeNewDiary.class));
+        else if(view.getId() == R.id.viewDiary)
+            startActivity(new Intent(getApplicationContext(), ViewDiaryActivity.class));
         else if(view.getId() == R.id.toPDF)
             startActivity(new Intent(getApplicationContext(), ExportSelectActivity.class));
     }
