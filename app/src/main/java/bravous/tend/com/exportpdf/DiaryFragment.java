@@ -1,5 +1,6 @@
 package bravous.tend.com.exportpdf;
 
+import android.app.PendingIntent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,8 +13,15 @@ import android.widget.TextView;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
 
 public class DiaryFragment extends Fragment {
+
+    final static int ALARM_REQUEST_CODE =100;
+    PendingIntent pendingIntent;
 
     View rootView;
     MaterialSheetFab materialSheetFab;
@@ -38,6 +46,8 @@ public class DiaryFragment extends Fragment {
         dateView.setText(date);
         commentView.setText(comment);
         //FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
+
+
         setupFab();
 
 
@@ -76,6 +86,19 @@ public class DiaryFragment extends Fragment {
         View overlay = rootView.findViewById(R.id.overlay);
         int sheetColor = getResources().getColor(R.color.colorPrimaryDark);
         int fabColor = getResources().getColor(R.color.colorAccent);
+
+        //db에서 받아온 comment time과 같거나 큰 시간일 때 플로팅버튼이 보이도록 설정
+        fab.setVisibility(View.INVISIBLE);
+        Calendar cal = new GregorianCalendar(Locale.KOREA);
+        cal.setTimeInMillis(System.currentTimeMillis());
+        long now = cal.getTimeInMillis();
+
+
+        if(now == commentTime){
+            fab.setVisibility(View.VISIBLE);
+        }else if(now > commentTime){
+            fab.setVisibility(View.VISIBLE);
+        }
 
         // Create material sheet FAB
         materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay, sheetColor, fabColor);
@@ -117,4 +140,6 @@ public class DiaryFragment extends Fragment {
             getActivity().getWindow().setStatusBarColor(color);
         }
     }
+
+
 }

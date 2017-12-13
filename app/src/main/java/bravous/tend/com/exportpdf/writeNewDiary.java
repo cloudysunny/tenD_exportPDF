@@ -72,12 +72,22 @@ public class writeNewDiary extends BaseActivity {
         happy.add("happy3");
         happy.add("happy4");
         happy.add("happy5");
+        happy.add("happy6");
+        happy.add("happy7");
+        happy.add("happy8");
+        happy.add("happy9");
+        happy.add("happy10");
         excited = new HashSet<>();
         excited.add("excited1");
         excited.add("excited2");
         excited.add("excited3");
         excited.add("excited4");
         excited.add("excited5");
+        excited.add("excited6");
+        excited.add("excited7");
+        excited.add("excited8");
+        excited.add("excited9");
+        excited.add("excited10");
         normal = new HashSet<>();
         normal.add("normal1");
         normal.add("normal2");
@@ -198,12 +208,17 @@ public class writeNewDiary extends BaseActivity {
         //코멘트 보이는 시각 설정
         Calendar cal = new GregorianCalendar(Locale.KOREA);
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        cal.set(Calendar.HOUR_OF_DAY, 22);
-        cal.set(Calendar.MINUTE, 00);
+        //cal.add(Calendar.DAY_OF_YEAR, 1);
+        //cal.set(Calendar.HOUR_OF_DAY, 22);
+        cal.add(Calendar.MINUTE, 2);
         cal.set(Calendar.SECOND, 00);
         long time =cal.getTimeInMillis();
-        Log.i("time check", Long.toString(time));
+
+        Date date_test = cal.getTime();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date1 = format1.format(date_test);
+
+        Log.i("time check", date1);
 
                 Diary diary = new Diary();
                 String dateValue = dateview.getText().toString();
@@ -278,50 +293,35 @@ public class writeNewDiary extends BaseActivity {
 
         Iterator<String> iterator = null;
         String comment = null;
-        ArrayList<Diary> checkList = getAllDiary(getCurrentNotebook());
-        Iterator<Diary> iterator1 = checkList.iterator();
-        ArrayList<String> emotionList = new ArrayList<>();
-        while (iterator1.hasNext()){
-         emotionList.add(iterator1.next().getEmotion());
+
+        //기존 comment 리스트 가져와서 iterator 만들기
+        ArrayList<Diary> diaryList = getAllDiary(getCurrentNotebook());
+        ArrayList<String> commentList = new ArrayList<>();
+        for(Diary diary : diaryList){
+            commentList.add(diary.getComment());
         }
-        Iterator<String> iterator2 = emotionList.iterator();
+        Log.i("commentList size", Integer.toString(commentList.size()));
 
         if(emotion.equals("기쁨")){
-                iterator = happy.iterator();
-                comment = iterator.next();
-                while (iterator2.hasNext()){
-                    if(!iterator2.next().equals(iterator.next()))
-                        comment = iterator.next();
-                }
-
+            happy.removeAll(commentList);
+            iterator = happy.iterator();
+            comment = iterator.next();
         }else if(emotion.equals("설렘")){
+            excited.removeAll(commentList);
             iterator = excited.iterator();
             comment = iterator.next();
-          //  while (iterator2.hasNext()){
-                while (!iterator2.next().equals(iterator.next()))
-                    comment = iterator.next();
-           // }
         }else if(emotion.equals("무념무상")){
+            normal.removeAll(commentList);
             iterator = normal.iterator();
             comment = iterator.next();
-            while (iterator2.hasNext()){
-                if(!iterator2.next().equals(iterator.next()))
-                    comment = iterator.next();
-            }
         }else if(emotion.equals("우울")){
+            melancholy.removeAll(commentList);
             iterator = melancholy.iterator();
             comment = iterator.next();
-            while (iterator2.hasNext()){
-                if(!iterator2.next().equals(iterator.next()))
-                    comment = iterator.next();
-            }
         }else if(emotion.equals("분노")){
+            angry.removeAll(commentList);
             iterator = angry.iterator();
             comment = iterator.next();
-            while (iterator2.hasNext()){
-                if(!iterator2.next().equals(iterator.next()))
-                    comment = iterator.next();
-            }
         }
         return comment;
     }
