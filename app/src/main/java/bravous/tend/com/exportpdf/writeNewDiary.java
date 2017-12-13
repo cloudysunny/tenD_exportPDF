@@ -1,5 +1,8 @@
 package bravous.tend.com.exportpdf;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -191,6 +194,10 @@ public class writeNewDiary extends BaseActivity {
 
         Diary diary = writeNewDiary(getCurrentNotebook());
 
+        //코멘트 알람 설정
+        int position = getAllDiary(getCurrentNotebook()).size();
+        setAlarm(position, diary.getCommentTime());
+
         MyDBHelper helper = new MyDBHelper(this);
   //      SQLiteDatabase db = helper.getWritableDatabase();
 //        db.execSQL("DELETE FROM " + helper.TABLE_DIARY);
@@ -210,7 +217,7 @@ public class writeNewDiary extends BaseActivity {
         cal.setTimeInMillis(System.currentTimeMillis());
         //cal.add(Calendar.DAY_OF_YEAR, 1);
         //cal.set(Calendar.HOUR_OF_DAY, 22);
-        cal.add(Calendar.MINUTE, 2);
+        cal.add(Calendar.MINUTE, +2);
         cal.set(Calendar.SECOND, 00);
         long time =cal.getTimeInMillis();
 
@@ -336,4 +343,14 @@ public class writeNewDiary extends BaseActivity {
         }
 
     }
+
+
+    public void setAlarm(int position, long time){
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, MyReceiver.class);
+        intent.putExtra("diary position", position);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+    }
+
 }

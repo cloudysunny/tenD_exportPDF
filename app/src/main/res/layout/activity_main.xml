@@ -27,4 +27,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PDF로 내보내기"/>
+
+    <Button
+        android:id="@+id/alramSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알림 설정"/>
 </LinearLayout>

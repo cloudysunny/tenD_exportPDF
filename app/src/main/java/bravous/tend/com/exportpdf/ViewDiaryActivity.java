@@ -1,5 +1,6 @@
 package bravous.tend.com.exportpdf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,15 +22,24 @@ public class ViewDiaryActivity extends BaseActivity {
         String current_notebook = getCurrentNotebook();
         diaryList = getAllDiary(current_notebook);
 
-        ViewPager viewpager = (ViewPager)findViewById(R.id.viewPager);
+        ViewPager viewpager = (ViewPager) findViewById(R.id.viewPager);
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-        viewpager.setAdapter(adapter);
 
+        Intent intent = getIntent();
 
+        if(intent != null) {
+            int position = intent.getIntExtra("diary position", 0);
+            viewpager.setAdapter(adapter);
+            viewpager.setCurrentItem(position);
+        }else {
+            viewpager.setAdapter(adapter);
+        }
     }
 
 
     public class FragmentAdapter extends FragmentStatePagerAdapter{
+
+        int position;
 
         public FragmentAdapter(FragmentManager fm) {
             super(fm);
@@ -52,4 +62,6 @@ public class ViewDiaryActivity extends BaseActivity {
             return diaryList.size();
         }
     }
+
+
 }
