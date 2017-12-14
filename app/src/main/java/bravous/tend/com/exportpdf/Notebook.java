@@ -10,14 +10,16 @@ public class Notebook {
     int notebook_type;
     boolean exist_pdf;
     String pdfPath;
+    String coverPath;
 
     public Notebook(){ }
 
-    public Notebook(String note_name, int notebook_type, boolean exist_pdf, String pdfPath){
+    public Notebook(String note_name, int notebook_type, boolean exist_pdf, String pdfPath, String coverPath){
         this.notebook_name = note_name;
         this.notebook_type = notebook_type;
         this.exist_pdf = exist_pdf;
         this.pdfPath = pdfPath;
+        this.coverPath = coverPath;
     }
 
     public void setNotebook_name(String notebook_name){
@@ -36,6 +38,9 @@ public class Notebook {
         this.pdfPath = pdfPath;
     }
 
+    public void setCoverPath(String coverPath){
+        this.coverPath = coverPath;
+    }
     public String getNotebook_name(){
         return notebook_name;
     }
@@ -52,5 +57,8 @@ public class Notebook {
         return pdfPath;
     }
 
+    public String getCoverPath() {
+        return coverPath;
+    }
 
 }

@@ -8,6 +8,11 @@
     tools:context="bravous.tend.com.exportpdf.MainActivity">
 
     <Button
+        android:id="@+id/startUse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="열다 시작하기"/>
+    <Button
         android:id="@+id/newNotebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

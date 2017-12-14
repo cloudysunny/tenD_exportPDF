@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
@@ -15,12 +16,16 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Bundle bundle = intent.getExtras();
+        int position = bundle.getInt("position");
+
         Intent viewDiaryIntent = new Intent(context, ViewDiaryActivity.class);
-        viewDiaryIntent.putExtra("diary position", intent.getStringExtra("diary position"));
+        viewDiaryIntent.putExtra("position", position);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 0,
                 viewDiaryIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_ONE_SHOT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle("열다")
                 .setContentText("코멘트가 도착했습니다.")

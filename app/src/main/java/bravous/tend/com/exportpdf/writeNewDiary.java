@@ -194,15 +194,19 @@ public class writeNewDiary extends BaseActivity {
 
         Diary diary = writeNewDiary(getCurrentNotebook());
 
-        //코멘트 알람 설정
-        int position = getAllDiary(getCurrentNotebook()).size();
-        setAlarm(position, diary.getCommentTime());
+        UserSetting setting = new UserSetting(this);
+        //코멘트 알람 작업 수행 여부
+        if(setting.getValue(setting.COMMENT_ALARM, true)==true) {
+            int position = getAllDiary(getCurrentNotebook()).size();
+            setAlarm(position, diary.getCommentTime());
+        }
 
         MyDBHelper helper = new MyDBHelper(this);
   //      SQLiteDatabase db = helper.getWritableDatabase();
 //        db.execSQL("DELETE FROM " + helper.TABLE_DIARY);
         helper.createDiary(diary);
     //    db.close();
+
     }
 
 
@@ -348,8 +352,8 @@ public class writeNewDiary extends BaseActivity {
     public void setAlarm(int position, long time){
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver.class);
-        intent.putExtra("diary position", position);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.putExtra("position", position);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         manager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 

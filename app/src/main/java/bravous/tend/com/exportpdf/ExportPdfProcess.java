@@ -50,20 +50,20 @@ public class ExportPdfProcess extends BaseActivity {
     int note_type;
     String final_fileName;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_export_pdf_process);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_export_pdf_process);
 
-        //노트 선택 페이지에서 받아온 intent값
-        Intent intent = getIntent();
-        note_name = intent.getStringExtra("NOTEBOOK_NAME");
-        note_type = intent.getIntExtra("NOTEBOOK_TYPE", 1);
-        //Log.i("intent.getStringExtra()", note_name);
-        final EditText filenameEdit = (EditText)findViewById(R.id.filename_blank);
-        Button pdfBtn = (Button)findViewById(R.id.PDFexport);
+            //노트 선택 페이지에서 받아온 intent값
+            Intent intent = getIntent();
+            note_name = intent.getStringExtra("NOTEBOOK_NAME");
+            note_type = intent.getIntExtra("NOTEBOOK_TYPE", 1);
+            //Log.i("intent.getStringExtra()", note_name);
+            final EditText filenameEdit = (EditText)findViewById(R.id.filename_blank);
+            Button pdfBtn = (Button)findViewById(R.id.PDFexport);
 
-        final int coverPath = getNotebookCoverPath(note_type);
+            final int coverPath = getNotebookCoverPath(note_type);
 
         final String file_name = note_name + ".pdf";
         filenameEdit.setText(file_name);

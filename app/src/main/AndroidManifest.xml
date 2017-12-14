@@ -5,8 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -23,7 +22,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ExportSelectActivity" />
-        <activity android:name=".ExportPdfDetail" />
         <activity android:name=".writeNewDiary" />
         <activity android:name=".ExportPdfProcess" />
         <activity android:name=".CreateNewNotebook" />
@@ -34,7 +32,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".AlarmSetting"></activity>
+        <activity android:name=".AlarmSetting" />
     </application>
 
 </manifest>
