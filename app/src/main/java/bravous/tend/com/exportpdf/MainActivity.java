@@ -2,16 +2,33 @@ package bravous.tend.com.exportpdf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
+
+    Toolbar toolbar;
+    ImageView imageView;
+    Bundle bundle;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        imageView = (ImageView)findViewById(R.id.alarmBell);
 
         Button startBtn = (Button)findViewById(R.id.startUse);
         Button newNoteBtn = (Button)findViewById(R.id.newNotebook);
@@ -25,7 +42,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         viewDiaryBtn.setOnClickListener(this);
         pdfBtn.setOnClickListener(this);
         alarmBtn.setOnClickListener(this);
-
 
     }
 
@@ -49,17 +65,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             setting.put(setting.COMMENT_ALARM, true);
             setting.put(setting.REGULAR_ALARM, false);
             setting.put(setting.IS_CURRENT_NOTEBOOK, true);
-//            UserSetting setting = new UserSetting();
-//            setting.setUserEmail("test@gmail.com");
-//            setting.setIsCurrentNotebook(false);
-//            setting.setUseCommentAlarm(true);
-//            setting.setUseRegularAlarm(false);
-//            MyDBHelper helper = new MyDBHelper(this);
-//            helper.startUse(setting);
+
             Toast.makeText(getApplicationContext(), "열다를 사용할 준비가 완료되었습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
+        bundle = intent.getExtras();
+
+        if(bundle!=null){
+            position = bundle.getInt("position");
+            imageView.setImageResource(R.drawable.bellon);
+            //  onResume();
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), ViewDiaryActivity.class);
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                    imageView.setImageResource(R.drawable.belloff);
+
+                }
+            });
+        }
+
+    }
 }

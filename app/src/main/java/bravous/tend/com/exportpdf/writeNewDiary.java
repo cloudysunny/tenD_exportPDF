@@ -97,18 +97,33 @@ public class writeNewDiary extends BaseActivity {
         normal.add("normal3");
         normal.add("normal4");
         normal.add("normal5");
+        normal.add("normal6");
+        normal.add("normal7");
+        normal.add("normal8");
+        normal.add("normal9");
+        normal.add("normal10");
         melancholy = new HashSet<>();
         melancholy.add("melancholy1");
         melancholy.add("melancholy2");
         melancholy.add("melancholy3");
         melancholy.add("melancholy4");
         melancholy.add("melancholy5");
+        melancholy.add("melancholy6");
+        melancholy.add("melancholy7");
+        melancholy.add("melancholy8");
+        melancholy.add("melancholy9");
+        melancholy.add("melancholy10");
         angry = new HashSet<>();
         angry.add("angry1");
         angry.add("angry2");
         angry.add("angry3");
         angry.add("angry4");
         angry.add("angry5");
+        angry.add("angry6");
+        angry.add("angry7");
+        angry.add("angry8");
+        angry.add("angry9");
+        angry.add("angry10");
 
 
 
@@ -199,6 +214,7 @@ public class writeNewDiary extends BaseActivity {
         if(setting.getValue(setting.COMMENT_ALARM, true)==true) {
             int position = getAllDiary(getCurrentNotebook()).size();
             setAlarm(position, diary.getCommentTime());
+            setAlarmBell(position, diary.getCommentTime());
         }
 
         MyDBHelper helper = new MyDBHelper(this);
@@ -353,8 +369,17 @@ public class writeNewDiary extends BaseActivity {
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver.class);
         intent.putExtra("position", position);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1010, intent, PendingIntent.FLAG_ONE_SHOT);
         manager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
+
+    public void setAlarmBell(int position, long time){
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, MyReceiver2.class);
+        intent.putExtra("position", position);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1011, intent, PendingIntent.FLAG_ONE_SHOT);
+        manager.set(AlarmManager.RTC, time, pendingIntent);
+    }
+
 
 }

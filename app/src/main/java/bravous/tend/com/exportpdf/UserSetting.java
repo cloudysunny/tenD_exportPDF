@@ -15,6 +15,7 @@ public class UserSetting {
     public final static String IS_CURRENT_NOTEBOOK = "current_notebook";
     public final static String COMMENT_ALARM = "comment_alarm";
     public final static String REGULAR_ALARM = "regular_alarm";
+    public final static String ALARM_TIME = "alarm_time";
     public Context context;
 
     UserSetting(Context context){

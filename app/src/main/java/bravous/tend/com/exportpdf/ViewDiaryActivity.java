@@ -30,6 +30,7 @@ public class ViewDiaryActivity extends BaseActivity {
             int position = bundle.getInt("position", 0);
             viewpager.setAdapter(adapter);
             viewpager.setCurrentItem(position);
+
         }else {
             viewpager.setAdapter(adapter);
         }
