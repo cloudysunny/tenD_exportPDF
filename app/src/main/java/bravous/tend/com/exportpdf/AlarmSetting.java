@@ -29,13 +29,9 @@ public class AlarmSetting extends BaseActivity {
     UserSetting setting;
 
     long settingTime; //사용자가 선택한 시간의 long타입 값(timeSetting()에서 리턴한 값)
-    String savedTime; //앱에 저장된 시간값
+    String savedTime; //기존에 저장된 시간값
 
     TextView timeView;
-
-    //timepicker에서 가져온 값을 담을 시, 분 변수
-    int hour;
-    int minute;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -49,16 +45,17 @@ public class AlarmSetting extends BaseActivity {
 
         timeView = (TextView)findViewById(R.id.settingTimeView);
 
-        savedTime = setting.getValue(setting.ALARM_TIME, "시간을 선택해주세요");
-        if(savedTime!=null | !savedTime.equals("alarm off"))
+
+        //기존에 설정한 값을 불러와서 세팅(알람 초기값은 comment: true, regular: false, 알람시간(savedTime: "")
+        savedTime = setting.getValue(setting.ALARM_TIME, "");
+        if(savedTime!=null){
             timeView.setText(savedTime);
-        else if(savedTime.equals("alarm off"))
+        }else{
             timeView.setText("");
+        }
 
         comment.setChecked(setting.getValue(setting.COMMENT_ALARM, true));
-        regular.setChecked(setting.getValue(setting.REGULAR_ALARM, true));
-        Log.i("setChecked state", Boolean.toString(setting.getValue(setting.COMMENT_ALARM, true)));
-
+        regular.setChecked(setting.getValue(setting.REGULAR_ALARM, false));
 
         comment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -72,14 +69,9 @@ public class AlarmSetting extends BaseActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
                 if(b == true){
-                    settingTime = timeSetting();
-                    SimpleDateFormat format = new SimpleDateFormat("HH"+"시 "+"mm"+"분");
-                    String viewTime = format.format(settingTime);
-                    timeView.setText(viewTime);
-                    savedTime = viewTime;
+                    timeSetting();
                 }else if(b == false){
                     timeView.setText("");
-                    savedTime = "alarm off";
                 }
 
                regular_alarm = b;
@@ -90,7 +82,7 @@ public class AlarmSetting extends BaseActivity {
         comment_alarm = setting.getValue(setting.COMMENT_ALARM, true);
 
         if(!regular.isActivated())
-            regular_alarm = setting.getValue(setting.REGULAR_ALARM, true);
+            regular_alarm = setting.getValue(setting.REGULAR_ALARM, false);
     }
 
     //regular alarm 설정
@@ -100,41 +92,47 @@ public class AlarmSetting extends BaseActivity {
         long now =System.currentTimeMillis();
 
         if(time < now){
-            time += now;
+            time += interval;
         }
 
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, MyReceiver2.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1000, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
+        Intent intent = new Intent(this, MyReceiver3.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                1000,
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     public void cancelAlarm(){
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmSetting.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1000, intent, 0);
+        Intent intent = new Intent(this, MyReceiver3.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1000, intent, PendingIntent.FLAG_NO_CREATE);
         alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
 
     public long timeSetting(){
+
         new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                hour = i;//timePicker.getCurrentHour(); // == i
-                minute = i1; //timePicker.getCurrentMinute(); // == i1
+            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+
+                Log.i("time picker check", hour + " / " + minute);
+                Calendar cal = new GregorianCalendar(Locale.KOREA);
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+                cal.set(Calendar.MINUTE, minute);
+                cal.set(Calendar.SECOND, 00);
+                settingTime =cal.getTimeInMillis();
+                SimpleDateFormat format = new SimpleDateFormat("HH"+"시 "+"mm"+"분");
+                String viewTime = format.format(settingTime);
+                timeView.setText(viewTime);
             }
         }, 22, 00, true).show();
 
-        Log.i("time picker check", hour + " / " + minute);
-        Calendar cal = new GregorianCalendar(Locale.KOREA);
-        cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, minute);
-        cal.set(Calendar.SECOND, 00);
-        long time =cal.getTimeInMillis();
-
-        return time;
+        return settingTime;
     }
 
 
@@ -148,26 +146,30 @@ public class AlarmSetting extends BaseActivity {
             if (comment_alarm == false) {
                 //이미 설정된 코멘트 알람 cancel이 안돼!!
                 NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
-               // Intent intent = new Intent(this, MyReceiver.class);
-               // PendingIntent sender = PendingIntent.getBroadcast(this, 1010, intent, PendingIntent.FLAG_NO_CREATE);
-               // if (sender != null) {
+                Intent intent = new Intent(this, MyReceiver.class);
+                PendingIntent sender = PendingIntent.getBroadcast(this, 1010, intent, PendingIntent.FLAG_NO_CREATE);
+                if (sender != null) {
                     manager.cancel(10);
-                 //   sender.cancel();
-               // }
+                    sender.cancel();
+               }
             }
         }
 
+        //레귤러 알람 설정사항이 변경된 경우에만 설정값 저장
             if (regular_alarm != setting.getValue(setting.REGULAR_ALARM, true)) {
                 setting.put(setting.REGULAR_ALARM, regular_alarm);
-                setting.put(setting.ALARM_TIME, savedTime);
-                if(regular_alarm == true)
-                    setAlarm(settingTime);
-                else
+
+                if(regular_alarm==false)
                     cancelAlarm();
             }
 
-        }
-
+            String timeViewValue = timeView.getText().toString();
+            //설정값은 그대로지만 시간을 변경한 경우
+            if(regular_alarm == true || !timeView.equals(setting.getValue(setting.ALARM_TIME, ""))) {
+                setting.put(setting.ALARM_TIME, timeView.getText().toString());
+                    setAlarm(settingTime);
+                    Log.i("onPause() settingTime", Long.toString(settingTime));
+                }
+            }
 
 }

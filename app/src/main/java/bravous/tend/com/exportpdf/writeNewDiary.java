@@ -209,13 +209,13 @@ public class writeNewDiary extends BaseActivity {
 
         Diary diary = writeNewDiary(getCurrentNotebook());
 
+        int position = getAllDiary(getCurrentNotebook()).size();
         UserSetting setting = new UserSetting(this);
-        //코멘트 알람 작업 수행 여부
+        //코멘트 알람 작업 수행 여부(알람설정을 꺼도 아이콘 알람표시는 항상 수행됨)
         if(setting.getValue(setting.COMMENT_ALARM, true)==true) {
-            int position = getAllDiary(getCurrentNotebook()).size();
             setAlarm(position, diary.getCommentTime());
-            setAlarmBell(position, diary.getCommentTime());
         }
+            setAlarmBell(position, diary.getCommentTime());
 
         MyDBHelper helper = new MyDBHelper(this);
   //      SQLiteDatabase db = helper.getWritableDatabase();
@@ -273,8 +273,10 @@ public class writeNewDiary extends BaseActivity {
         options.inSampleSize = calculateInSampleSize(options, 400, 400);
         options.inJustDecodeBounds = false;
         bitmap = BitmapFactory.decodeFile(imagePathFromGallery, options);
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 400, bitmap.getHeight()*400/bitmap.getWidth(), true);
-        resized.compress(Bitmap.CompressFormat.PNG, 50, bos);
+
+            Bitmap.createScaledBitmap(bitmap, 400, bitmap.getHeight() * 400 / bitmap.getWidth(), true)
+            .compress(Bitmap.CompressFormat.PNG, 50, bos);
+
         bos.flush();
         bos.close();
         fos.close();

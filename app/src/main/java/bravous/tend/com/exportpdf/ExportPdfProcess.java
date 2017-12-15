@@ -21,12 +21,15 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.BufferedReader;
@@ -111,6 +114,23 @@ public class ExportPdfProcess extends BaseActivity {
         }
     }
 
+    //한글폰트 처리(한글 텍스트 넣었을 때 깨지는 현상)
+    public BaseFont fontSetting() throws IOException, DocumentException {
+        BaseFont baseFont = null;
+
+        InputStream is = getAssets().open("jejuMyeongjo.ttf");
+        int size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        baseFont = BaseFont.createFont("jejuMyeongjo.ttf",
+                BaseFont.IDENTITY_H,
+                true,
+                false, buffer,
+                null);
+
+        return baseFont;
+    }
 
     //pdf파일 생성 메소드
     public void createPDF(String filename, int coverPath) throws Exception{
@@ -135,31 +155,23 @@ public class ExportPdfProcess extends BaseActivity {
             Background event = new Background();
             pdfWriter.setPageEvent(event);
 
+            BaseFont baseFont = fontSetting();
+
             //문서 작성 시작
             document.open();
 
-            //한글 텍스트 입력시  오류 현상 해결 위해 한글 폰트 설정
-            BaseFont baseFont = null;
-
-            InputStream is = getAssets().open("jejuMyeongjo.ttf");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            baseFont = BaseFont.createFont("jejuMyeongjo.ttf",
-                    BaseFont.IDENTITY_H,
-                    true,
-                    false, buffer,
-                    null);
-
-            Font font = new Font(baseFont, 16);
-
             //공책 표지
+            PdfContentByte cb = pdfWriter.getDirectContentUnder();
+            Image wm = getWatermarkedImage(cb, getImage(coverPath, "JPG"), note_name, new Font(fontSetting(), 24));
+            wm.setAbsolutePosition(0,0);
             Image coverImg = getImage(coverPath, "JPG");
             coverImg.scaleAbsolute(PageSize.B5);
             coverImg.setAbsolutePosition(0, 0);
-            document.add(coverImg);
+            //document.add(coverImg);
+            document.add(wm);
             document.newPage();
+
+            Font font = new Font(baseFont, 16);
 
            //일기 데이터 가져오기
             ArrayList<Diary> diaryList = getAllDiary(note_name);
@@ -303,6 +315,21 @@ public class ExportPdfProcess extends BaseActivity {
 
         db.close();
     }
+
+    //공책 표지 작업을 위한 클래스
+    //공책 표지 이미지 위에 제목 텍스트를 삽입해야 하는데, 가장 쉬운 방법은 이미지를 백그라운드이미지로 설정하는 것.
+    //하지만 이미 모든 페이지에 동일한 배경이미지(공책 속지)를 설정한 상태이므로 표지만 별도의 배경화면을 따로 설정하기 어려움.
+    public Image getWatermarkedImage(PdfContentByte cb, Image img, String watermark, Font font)
+            throws DocumentException {
+        float width = PageSize.B5.getWidth();
+        float height = PageSize.B5.getHeight();
+        PdfTemplate template = cb.createTemplate(width, height);
+        template.addImage(img, width, 0, 0, height, 0, 0);
+        ColumnText.showTextAligned(template, Element.ALIGN_CENTER,
+                new Phrase(watermark, font), width / 2, height / 1.5f, 0);
+        return Image.getInstance(template);
+    }
+
 }
 
 

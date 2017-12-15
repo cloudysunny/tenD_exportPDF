@@ -9,33 +9,27 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
-public class MyReceiver extends BroadcastReceiver {
+public class MyReceiver3 extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        Bundle bundle = intent.getExtras();
-        int position = bundle.getInt("position");
-
-        Intent viewDiaryIntent = new Intent(context, ViewDiaryActivity.class);
-        viewDiaryIntent.putExtra("position", position);
+        Intent writeNewDiaryIntent = new Intent(context, writeNewDiary.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                1010,
-                viewDiaryIntent,
-                PendingIntent.FLAG_ONE_SHOT);
+                1000,
+                writeNewDiaryIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
         Uri soundUri= RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION);
 
         builder.setContentTitle("열다")
-                .setContentText("코멘트가 도착했습니다.")
-                .setTicker("열다-코멘트가 도착했습니다.")
+                .setContentText("하루를 정리할 시간입니다.")
+                .setTicker("열다-하루를 정리할 시간입니다.")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
@@ -50,7 +44,7 @@ public class MyReceiver extends BroadcastReceiver {
         }
 
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(10, builder.build());
+        manager.notify(11, builder.build());
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE );
         PowerManager.WakeLock wakeLock = pm.newWakeLock( PowerManager.SCREEN_DIM_WAKE_LOCK
