@@ -17,6 +17,7 @@ public class MyReceiver3 extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         Intent writeNewDiaryIntent = new Intent(context, writeNewDiary.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 1000,

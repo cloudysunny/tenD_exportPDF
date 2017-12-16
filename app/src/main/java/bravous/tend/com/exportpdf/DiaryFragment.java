@@ -38,7 +38,7 @@ public class DiaryFragment extends Fragment {
         Bundle bundle = getArguments();
         String date = bundle.getString("Date");
         String emotion=bundle.getString("Emotion");
-        comment= bundle.getString("Comment");
+        comment= bundle.getString("bravous.tend.com.exportpdf.Comment");
         commentTime = bundle.getLong("CommentTime");
 
         TextView dateView = (TextView)rootView.findViewById(R.id.dateView);

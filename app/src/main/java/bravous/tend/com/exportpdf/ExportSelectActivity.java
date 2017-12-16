@@ -23,6 +23,8 @@ public class ExportSelectActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private Notebook selectedNotebook;
 
+    private NotebookType notebookType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +64,12 @@ public class ExportSelectActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             selectedNotebook = notebookList.get(position);
+
             NotebookViewHolder viewHolder = (NotebookViewHolder)holder;
-            Log.i("getNotebook_type() ", Integer.toString(selectedNotebook.getNotebook_type()));
-            Log.i("getNotebookCoverPath()", Integer.toString(getNotebookCoverPath(1)));
-            viewHolder.imageView.setImageResource(getNotebookCoverPath(selectedNotebook.getNotebook_type()));
+
+            notebookType = NotebookType.valueOf(selectedNotebook.getNotebook_type());
+
+            viewHolder.imageView.setImageResource(notebookType.getCoverPath());
             viewHolder.titleView.setText(selectedNotebook.getNotebook_name());
 
             if(selectedNotebook.getExist_pdf()==true){
@@ -106,7 +110,7 @@ public class ExportSelectActivity extends BaseActivity {
         public void onClick(View view) {
             Intent intent = new Intent(getApplicationContext(), ExportPdfProcess.class);
             intent.putExtra("NOTEBOOK_NAME", selectedNotebook.getNotebook_name());
-            intent.putExtra("NOTEBOOK_TYPE", selectedNotebook.getNotebook_type());
+            intent.putExtra("NOTEBOOK_COVER_ID", notebookType.getCoverPath());
             startActivity(intent);
 
         }

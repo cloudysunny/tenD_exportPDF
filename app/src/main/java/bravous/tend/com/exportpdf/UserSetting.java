@@ -20,8 +20,8 @@ public class UserSetting {
 
     UserSetting(Context context){
         this.context = context;
-
     }
+
 
     public void put(String key,String value){
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
@@ -34,6 +34,13 @@ public class UserSetting {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public void put(String key,long value){
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putLong(key, value);
         editor.apply();
     }
 
@@ -50,6 +57,15 @@ public class UserSetting {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
         try {
             return pref.getBoolean(key, dftValue);
+        } catch (Exception e) {
+            return dftValue;
+        }
+    }
+
+    public long getValue(String key, long dftValue) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
+        try {
+            return pref.getLong(key, dftValue);
         } catch (Exception e) {
             return dftValue;
         }

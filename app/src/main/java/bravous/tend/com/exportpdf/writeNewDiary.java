@@ -20,6 +20,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,6 +44,8 @@ import java.util.Locale;
 
 public class writeNewDiary extends BaseActivity {
 
+
+    DatabaseReference db;
 
     //코멘트 테스트
     HashSet<String> happy;
@@ -67,6 +75,12 @@ public class writeNewDiary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_new_diary);
+
+        db = FirebaseDatabase.getInstance().getReference();
+
+        angry = getCommentDB("anger");
+        Log.i("treesetSize check", Integer.toString(angry.size()));
+
 
         //코멘트 테스트
         happy = new HashSet<>();
@@ -207,9 +221,10 @@ public class writeNewDiary extends BaseActivity {
 
     private void submitDiary() throws IOException {
 
-        Diary diary = writeNewDiary(getCurrentNotebook());
+        Notebook notebook = getCurrentNotebook();
+        Diary diary = writeNewDiary(notebook.getNotebook_name());
 
-        int position = getAllDiary(getCurrentNotebook()).size();
+        int position = getAllDiary(notebook.getNotebook_name()).size();
         UserSetting setting = new UserSetting(this);
         //코멘트 알람 작업 수행 여부(알람설정을 꺼도 아이콘 알람표시는 항상 수행됨)
         if(setting.getValue(setting.COMMENT_ALARM, true)==true) {
@@ -324,7 +339,7 @@ public class writeNewDiary extends BaseActivity {
         String comment = null;
 
         //기존 comment 리스트 가져와서 iterator 만들기
-        ArrayList<Diary> diaryList = getAllDiary(getCurrentNotebook());
+        ArrayList<Diary> diaryList = getAllDiary(getCurrentNotebook().getNotebook_name());
         ArrayList<String> commentList = new ArrayList<>();
         for(Diary diary : diaryList){
             commentList.add(diary.getComment());
@@ -332,22 +347,27 @@ public class writeNewDiary extends BaseActivity {
         Log.i("commentList size", Integer.toString(commentList.size()));
 
         if(emotion.equals("기쁨")){
+            //happy = getCommentDB("happiness");
             happy.removeAll(commentList);
             iterator = happy.iterator();
             comment = iterator.next();
         }else if(emotion.equals("설렘")){
+            //excited = getCommentDB("excite");
             excited.removeAll(commentList);
             iterator = excited.iterator();
             comment = iterator.next();
         }else if(emotion.equals("무념무상")){
+            //normal = getCommentDB("flat");
             normal.removeAll(commentList);
             iterator = normal.iterator();
             comment = iterator.next();
         }else if(emotion.equals("우울")){
+            //melancholy = getCommentDB("gloomy");
             melancholy.removeAll(commentList);
             iterator = melancholy.iterator();
             comment = iterator.next();
         }else if(emotion.equals("분노")){
+            //angry = getCommentDB("anger");
             angry.removeAll(commentList);
             iterator = angry.iterator();
             comment = iterator.next();
@@ -363,7 +383,6 @@ public class writeNewDiary extends BaseActivity {
             bitmap.recycle();
             bitmap = null;
         }
-
     }
 
 
@@ -381,6 +400,28 @@ public class writeNewDiary extends BaseActivity {
         intent.putExtra("position", position);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1011, intent, PendingIntent.FLAG_ONE_SHOT);
         manager.set(AlarmManager.RTC, time, pendingIntent);
+    }
+
+
+    public HashSet<String> getCommentDB(String emotion){
+
+        final HashSet<String> commentSet = new HashSet<>();
+
+        db.child("comments").child(emotion).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    commentSet.add(snapshot.getValue().toString());
+                    Log.i("getComment check", snapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        return commentSet;
     }
 
 

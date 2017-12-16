@@ -18,7 +18,7 @@ public class ViewDiaryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_diary);
 
-        String current_notebook = getCurrentNotebook();
+        String current_notebook = getCurrentNotebook().getNotebook_name();
         diaryList = getAllDiary(current_notebook);
 
         ViewPager viewpager = (ViewPager) findViewById(R.id.viewPager);
@@ -51,7 +51,7 @@ public class ViewDiaryActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             bundle.putString("Date", diaryList.get(position).getDate());
             bundle.putString("Emotion", diaryList.get(position).getEmotion());
-            bundle.putString("Comment", diaryList.get(position).getComment());
+            bundle.putString("bravous.tend.com.exportpdf.Comment", diaryList.get(position).getComment());
             bundle.putLong("CommentTime", diaryList.get(position).getCommentTime());
             fragment.setArguments(bundle);
             return fragment;

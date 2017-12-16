@@ -21,7 +21,6 @@ public class MyReceiver extends BroadcastReceiver {
 
         Bundle bundle = intent.getExtras();
         int position = bundle.getInt("position");
-
         Intent viewDiaryIntent = new Intent(context, ViewDiaryActivity.class);
         viewDiaryIntent.putExtra("position", position);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,

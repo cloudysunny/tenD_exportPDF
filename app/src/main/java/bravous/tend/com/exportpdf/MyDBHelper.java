@@ -13,14 +13,13 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
 
-    public static final String DATABASE_NAME = "testDB15";
+    public static final String DATABASE_NAME = "testDB17";
 
     public static final String TABLE_NOTEBOOK = "notebook_tb";
     public static final String TABLE_DIARY = "diary_tb";
 
     public static final String KEY_ID = "_id";
     public static final String KEY_NOTEBOOK_NAME = "notebook_name";
-    public static final String KEY_COVER_PATH = "cover_path";
 
     public static final String KEY_DATE = "date";
     public final String KEY_EMOTION = "emotion";
@@ -55,8 +54,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + TABLE_NOTEBOOK + " (" +
                         KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         KEY_NOTEBOOK_NAME + " not null, " +
-                        KEY_NOTEBOOK_TYPE + " INTEGER not null, " +
-                        KEY_COVER_PATH + " not null, " +
+                        KEY_NOTEBOOK_TYPE + " not null, " +
                         //boolean : false=0, true=1
                         KEY_EXIST_PDF + " INTEGER not null, " +
                         KEY_PDF_PATH + ");";
@@ -107,7 +105,6 @@ public class MyDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_NOTEBOOK_NAME, notebook.getNotebook_name());
         values.put(KEY_NOTEBOOK_TYPE, notebook.getNotebook_type());
-        values.put(KEY_COVER_PATH, notebook.getCoverPath());
         values.put(KEY_EXIST_PDF, notebook.getExist_pdf());
         values.put(KEY_PDF_PATH, notebook.getPdfPath());
 

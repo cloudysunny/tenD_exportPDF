@@ -3,7 +3,6 @@ package bravous.tend.com.exportpdf;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -14,61 +13,34 @@ import java.util.ArrayList;
 public class BaseActivity extends AppCompatActivity {
 
 
-    public String getCurrentNotebook(){
+    //현재 노트북을 불러왔을 때 노트북 이름값을 반환하는 것에서 노트북 객체 자체를 반환하는 걸로 바꾸었어요.
+    //그럼 이제 메인 화면에서 새로 만든 노트북의 이름(사용자 지정)과 표지를 띄울 때
+    //getCurrentNotebook()으로 먼저 노트북 객체를 불러오고(Notebook notebook = getCurrentNotebook())
+    //그 다음에 notebook.getNote_name()으로 노트북 이름을 불러옵니다.
+    //노트북 이미지 id(R.drawable.id)는 notebook.getNote_type()으로 노트타입 상수를 먼저 받아온 다음에
+    //NotebookType type = NotebookType.valueOf(notebook.getNote_type());
+    //int id = type.getCoverpath()
+    // 이렇게 불러올 수 있습니다.(CreateNewNotebook.java의 주석 참고)
+    public Notebook getCurrentNotebook(){
 
-        String notebook_Name = null;
+        Notebook notebook = new Notebook();
 
-        MyDBHelper helper = new MyDBHelper(this);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select " + helper.KEY_NOTEBOOK_NAME
-                + " from " + helper.TABLE_NOTEBOOK
+        MyDBHelper myDBHelper = new MyDBHelper(this);
+        SQLiteDatabase db = myDBHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from "
+                + myDBHelper.TABLE_NOTEBOOK
                 +  " order by _id desc limit 1", null);
         if(cursor.getCount() != 0) {
             cursor.moveToFirst();
-            notebook_Name = cursor.getString(cursor.getColumnIndex(helper.KEY_NOTEBOOK_NAME));
+            notebook.setNotebook_name(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_NAME)));
+            notebook.setNotebook_type(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_TYPE)));
+            notebook.setPdfPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_PDF_PATH)));
+            notebook.setExist_pdf(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))>0);
         }
         db.close();
 
-        return notebook_Name;
+        return notebook;
     }
-
-        public int getNotebookTypeFromName(String notebook_name){
-
-            int notebook_type = 0;
-
-            MyDBHelper myDBHelper = new MyDBHelper(this);
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            String sql = "SELECT " + myDBHelper.KEY_NOTEBOOK_TYPE + " FROM " + myDBHelper.TABLE_NOTEBOOK
-                    + " WHERE "+myDBHelper.KEY_NOTEBOOK_NAME + " = '" + notebook_name + "'";
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if(cursor.getCount() != 0) {
-                cursor.moveToFirst();
-                notebook_type = cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_TYPE));
-            }
-            Log.i("getNotebookType() check", Integer.toString(notebook_type));
-
-            db.close();
-
-            return notebook_type;
-        }
-
-
-        public int getNotebookCoverPath(int ordinal){
-            int coverPath = 0;
-
-            if(ordinal==0){
-                coverPath=NotebookType.LEAF.getCoverPath();
-            }else if(ordinal == 1){
-                coverPath= NotebookType.FLOWER.getCoverPath();
-            }else if(ordinal == 2){
-                coverPath= NotebookType.PATTERN.getCoverPath();
-            }else if(ordinal == 3){
-                coverPath= NotebookType.FRUIT.getCoverPath();
-            }
-
-            return coverPath;
-        }
 
 
         public ArrayList<Diary> getAllDiary(String note_name) {
@@ -112,14 +84,9 @@ public class BaseActivity extends AppCompatActivity {
 
                 Notebook notebook = new Notebook();
                 notebook.setNotebook_name(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_NAME)));
-                notebook.setNotebook_type(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_TYPE)));
+                notebook.setNotebook_type(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_NOTEBOOK_TYPE)));
                 notebook.setPdfPath(cursor.getString(cursor.getColumnIndex(myDBHelper.KEY_PDF_PATH)));
                 notebook.setExist_pdf(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))>0);
-
-//                if(cursor.getInt(cursor.getColumnIndex(myDBHelper.KEY_EXIST_PDF))==0)
-//                    notebook.setExist_pdf(false);
-//                else
-//                    notebook.setExist_pdf(true);
 
                 list.add(notebook);
             }

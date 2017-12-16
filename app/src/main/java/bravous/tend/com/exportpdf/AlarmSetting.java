@@ -20,6 +20,8 @@ import java.util.Locale;
 
 public class AlarmSetting extends BaseActivity {
 
+
+
     boolean comment_alarm;
     boolean regular_alarm;
 
@@ -37,6 +39,9 @@ public class AlarmSetting extends BaseActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_setting);
+
+
+
 
         setting = new UserSetting(this);
 
@@ -105,11 +110,13 @@ public class AlarmSetting extends BaseActivity {
     }
 
     public void cancelAlarm(){
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyReceiver3.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1000, intent, PendingIntent.FLAG_NO_CREATE);
-        alarmManager.cancel(pendingIntent);
-        pendingIntent.cancel();
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
     }
 
 
@@ -155,18 +162,25 @@ public class AlarmSetting extends BaseActivity {
             }
         }
 
+
+        String timeViewValue = timeView.getText().toString();
         //레귤러 알람 설정사항이 변경된 경우에만 설정값 저장
             if (regular_alarm != setting.getValue(setting.REGULAR_ALARM, true)) {
                 setting.put(setting.REGULAR_ALARM, regular_alarm);
 
-                if(regular_alarm==false)
+                if(regular_alarm==true) {
+                    setting.put(setting.ALARM_TIME, timeViewValue);
+                    setAlarm(settingTime);
+                }else {
+                    setting.put(setting.ALARM_TIME, "");
                     cancelAlarm();
+                }
             }
 
-            String timeViewValue = timeView.getText().toString();
             //설정값은 그대로지만 시간을 변경한 경우
-            if(regular_alarm == true || !timeView.equals(setting.getValue(setting.ALARM_TIME, ""))) {
-                setting.put(setting.ALARM_TIME, timeView.getText().toString());
+            if(regular_alarm == true && !timeViewValue.equals(setting.getValue(setting.ALARM_TIME, ""))) {
+                cancelAlarm();
+                setting.put(setting.ALARM_TIME, timeViewValue);
                     setAlarm(settingTime);
                     Log.i("onPause() settingTime", Long.toString(settingTime));
                 }

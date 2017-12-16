@@ -48,9 +48,9 @@ import java.util.Iterator;
 public class ExportPdfProcess extends BaseActivity {
 
     public Bitmap bmp;
-    NotebookType notebookType;
     String note_name;
-    int note_type;
+    int cover_id;
+    String file_name;
     String final_fileName;
 
         @Override
@@ -61,15 +61,14 @@ public class ExportPdfProcess extends BaseActivity {
             //노트 선택 페이지에서 받아온 intent값
             Intent intent = getIntent();
             note_name = intent.getStringExtra("NOTEBOOK_NAME");
-            note_type = intent.getIntExtra("NOTEBOOK_TYPE", 1);
+            cover_id = intent.getIntExtra("NOTEBOOK_COVER_ID", 1);
             //Log.i("intent.getStringExtra()", note_name);
             final EditText filenameEdit = (EditText)findViewById(R.id.filename_blank);
             Button pdfBtn = (Button)findViewById(R.id.PDFexport);
 
-            final int coverPath = getNotebookCoverPath(note_type);
 
-        final String file_name = note_name + ".pdf";
-        filenameEdit.setText(file_name);
+            file_name = note_name + ".pdf";
+            filenameEdit.setText(file_name);
 
         pdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +77,7 @@ public class ExportPdfProcess extends BaseActivity {
                     //
                     final_fileName = filenameEdit.getText().toString();
 
-                    createPDF(final_fileName, coverPath);
+                    createPDF(final_fileName, cover_id);
                     updatePdfInfo(note_name, final_fileName);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -7,26 +7,24 @@ package bravous.tend.com.exportpdf;
 public class Notebook {
 
     String notebook_name;
-    int notebook_type;
+    String notebook_type;
     boolean exist_pdf;
     String pdfPath;
-    String coverPath;
 
     public Notebook(){ }
 
-    public Notebook(String note_name, int notebook_type, boolean exist_pdf, String pdfPath, String coverPath){
+    public Notebook(String note_name, String notebook_type, boolean exist_pdf, String pdfPath){
         this.notebook_name = note_name;
         this.notebook_type = notebook_type;
         this.exist_pdf = exist_pdf;
         this.pdfPath = pdfPath;
-        this.coverPath = coverPath;
     }
 
     public void setNotebook_name(String notebook_name){
         this.notebook_name = notebook_name;
     }
 
-    public void setNotebook_type(int notebook_type){
+    public void setNotebook_type(String notebook_type){
         this.notebook_type = notebook_type;
     }
 
@@ -38,14 +36,11 @@ public class Notebook {
         this.pdfPath = pdfPath;
     }
 
-    public void setCoverPath(String coverPath){
-        this.coverPath = coverPath;
-    }
     public String getNotebook_name(){
         return notebook_name;
     }
 
-    public int getNotebook_type(){
+    public String getNotebook_type(){
         return notebook_type;
     }
 
@@ -57,8 +52,5 @@ public class Notebook {
         return pdfPath;
     }
 
-    public String getCoverPath() {
-        return coverPath;
-    }
 
 }

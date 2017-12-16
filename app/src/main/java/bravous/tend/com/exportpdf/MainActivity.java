@@ -65,6 +65,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             setting.put(setting.COMMENT_ALARM, true);
             setting.put(setting.REGULAR_ALARM, false);
             setting.put(setting.IS_CURRENT_NOTEBOOK, true);
+            setting.put(setting.ALARM_TIME, "");
 
             Toast.makeText(getApplicationContext(), "열다를 사용할 준비가 완료되었습니다.", Toast.LENGTH_SHORT).show();
         }
