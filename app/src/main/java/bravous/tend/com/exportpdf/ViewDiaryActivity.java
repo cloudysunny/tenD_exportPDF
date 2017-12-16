@@ -51,7 +51,7 @@ public class ViewDiaryActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             bundle.putString("Date", diaryList.get(position).getDate());
             bundle.putString("Emotion", diaryList.get(position).getEmotion());
-            bundle.putString("bravous.tend.com.exportpdf.Comment", diaryList.get(position).getComment());
+            bundle.putString("Comment", diaryList.get(position).getComment());
             bundle.putLong("CommentTime", diaryList.get(position).getCommentTime());
             fragment.setArguments(bundle);
             return fragment;
