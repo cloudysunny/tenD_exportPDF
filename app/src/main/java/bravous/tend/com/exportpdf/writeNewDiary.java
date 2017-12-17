@@ -69,6 +69,8 @@ public class writeNewDiary extends BaseActivity {
 
     Notebook notebook;
 
+    ArrayList<Comment> list;
+
     public Bitmap bitmap;
 
     @Override
@@ -76,68 +78,23 @@ public class writeNewDiary extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_new_diary);
 
+        //파이어베이스 db에서 전체 코멘트 리스트 미리 불러오기
+        list = new ArrayList<>();
         db = FirebaseDatabase.getInstance().getReference();
+        db.child("comment").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("datasnanpshot check", Long.toString(dataSnapshot.getChildrenCount()));
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    list.add(snapshot.getValue(Comment.class));
+                }
+            }
 
-        angry = getCommentDB("anger");
-        Log.i("treesetSize check", Integer.toString(angry.size()));
-
-
-        //코멘트 테스트
-        happy = new HashSet<>();
-        happy.add("happy1");
-        happy.add("happy2");
-        happy.add("happy3");
-        happy.add("happy4");
-        happy.add("happy5");
-        happy.add("happy6");
-        happy.add("happy7");
-        happy.add("happy8");
-        happy.add("happy9");
-        happy.add("happy10");
-        excited = new HashSet<>();
-        excited.add("excited1");
-        excited.add("excited2");
-        excited.add("excited3");
-        excited.add("excited4");
-        excited.add("excited5");
-        excited.add("excited6");
-        excited.add("excited7");
-        excited.add("excited8");
-        excited.add("excited9");
-        excited.add("excited10");
-        normal = new HashSet<>();
-        normal.add("normal1");
-        normal.add("normal2");
-        normal.add("normal3");
-        normal.add("normal4");
-        normal.add("normal5");
-        normal.add("normal6");
-        normal.add("normal7");
-        normal.add("normal8");
-        normal.add("normal9");
-        normal.add("normal10");
-        melancholy = new HashSet<>();
-        melancholy.add("melancholy1");
-        melancholy.add("melancholy2");
-        melancholy.add("melancholy3");
-        melancholy.add("melancholy4");
-        melancholy.add("melancholy5");
-        melancholy.add("melancholy6");
-        melancholy.add("melancholy7");
-        melancholy.add("melancholy8");
-        melancholy.add("melancholy9");
-        melancholy.add("melancholy10");
-        angry = new HashSet<>();
-        angry.add("angry1");
-        angry.add("angry2");
-        angry.add("angry3");
-        angry.add("angry4");
-        angry.add("angry5");
-        angry.add("angry6");
-        angry.add("angry7");
-        angry.add("angry8");
-        angry.add("angry9");
-        angry.add("angry10");
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i("datasnanpshot check", databaseError.getMessage());
+            }
+        });
 
 
 
@@ -243,6 +200,10 @@ public class writeNewDiary extends BaseActivity {
 
     private Diary writeNewDiary(final String noteName) throws IOException {
 
+        HashSet<String> commentSet = getCommentDB(emotion);
+        Log.i("commentSet size 2 ", Integer.toString(commentSet.size()));
+
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date(System.currentTimeMillis());
         String timestamp = simpleDateFormat.format(date);
@@ -269,7 +230,7 @@ public class writeNewDiary extends BaseActivity {
                 diary.setEmotion(emotion);
                 diary.setImgPath(saveImageFile(imagePathFromGallery, timestamp+".png"));
                 diary.setTextPath(saveTextFile(editText.getText().toString(), timestamp+".txt"));
-                diary.setComment(getRandomComment(emotion));
+                diary.setComment(getRandomComment(commentSet));
                 diary.setCommentTime(time);
                 return diary;
 
@@ -333,11 +294,7 @@ public class writeNewDiary extends BaseActivity {
     }
 
 
-    public String getRandomComment(String emotion){
-
-        Iterator<String> iterator = null;
-        String comment = null;
-
+    public String getRandomComment(HashSet<String> commentSet){
         //기존 comment 리스트 가져와서 iterator 만들기
         ArrayList<Diary> diaryList = getAllDiary(getCurrentNotebook().getNotebook_name());
         ArrayList<String> commentList = new ArrayList<>();
@@ -346,32 +303,10 @@ public class writeNewDiary extends BaseActivity {
         }
         Log.i("commentList size", Integer.toString(commentList.size()));
 
-        if(emotion.equals("기쁨")){
-            //happy = getCommentDB("happiness");
-            happy.removeAll(commentList);
-            iterator = happy.iterator();
-            comment = iterator.next();
-        }else if(emotion.equals("설렘")){
-            //excited = getCommentDB("excite");
-            excited.removeAll(commentList);
-            iterator = excited.iterator();
-            comment = iterator.next();
-        }else if(emotion.equals("무념무상")){
-            //normal = getCommentDB("flat");
-            normal.removeAll(commentList);
-            iterator = normal.iterator();
-            comment = iterator.next();
-        }else if(emotion.equals("우울")){
-            //melancholy = getCommentDB("gloomy");
-            melancholy.removeAll(commentList);
-            iterator = melancholy.iterator();
-            comment = iterator.next();
-        }else if(emotion.equals("분노")){
-            //angry = getCommentDB("anger");
-            angry.removeAll(commentList);
-            iterator = angry.iterator();
-            comment = iterator.next();
-        }
+        commentSet.removeAll(commentList);
+        Iterator<String> commentIterator = commentSet.iterator();
+        String comment = commentIterator.next();
+
         return comment;
     }
 
@@ -402,24 +337,19 @@ public class writeNewDiary extends BaseActivity {
         manager.set(AlarmManager.RTC, time, pendingIntent);
     }
 
+    HashSet<String> commentSet;
 
-    public HashSet<String> getCommentDB(String emotion){
+    public HashSet<String> getCommentDB(final String selectEmotion){
 
-        final HashSet<String> commentSet = new HashSet<>();
+        commentSet = new HashSet<>();
+        String str = null;
 
-        db.child("comments").child(emotion).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    commentSet.add(snapshot.getValue().toString());
-                    Log.i("getComment check", snapshot.getValue().toString());
-                }
+        for(Comment comment : list){
+            if(comment.getEmotion_type().equals(selectEmotion)){
+                commentSet.add(comment.getComment());
             }
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
 
         return commentSet;
     }

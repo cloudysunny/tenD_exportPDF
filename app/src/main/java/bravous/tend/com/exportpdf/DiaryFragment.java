@@ -1,6 +1,5 @@
 package bravous.tend.com.exportpdf;
 
-import android.app.PendingIntent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,8 +19,6 @@ import java.util.Locale;
 
 public class DiaryFragment extends Fragment {
 
-    final static int ALARM_REQUEST_CODE =100;
-    PendingIntent pendingIntent;
 
     View rootView;
     MaterialSheetFab materialSheetFab;
